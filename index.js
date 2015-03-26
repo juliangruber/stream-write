@@ -11,13 +11,14 @@ module.exports = function write(stream, chunk, cb){
   if (stream.socket && !stream.socket.writable) {
     var err = new Error('write after end');
     err.status = 200;
-    return cb(err);
+    setImmediate(cb.bind(null, err));
+    return;
   }
 
   if (stream.write(chunk)) {
     stream.removeListener('error', error);
     if (errored) return;
-    cb(null, stream.writable);
+    setImmediate(cb.bind(null, null, stream.writable));
   } else {
     stream.once('drain', next);
     stream.once('finish', next);
