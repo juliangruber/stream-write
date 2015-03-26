@@ -1,6 +1,6 @@
 {
   "name": "stream-write",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Write to a stream callback style",
   "scripts": {
     "test": "make test"
