@@ -1,4 +1,3 @@
-
 module.exports = function write(stream, chunk, cb){
   var errored = false;
 
