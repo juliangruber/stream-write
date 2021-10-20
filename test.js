@@ -80,6 +80,4 @@ test('listener cleanup', async function(){
   }
 });
 
-!(async function() {
-  await test.run()
-})()
+test.run()
