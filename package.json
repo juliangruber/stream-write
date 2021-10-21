@@ -1,7 +1,7 @@
 {
   "name": "stream-write",
   "version": "1.0.1",
-  "description": "Write to a stream callback style",
+  "description": "Write to a stream promise style",
   "scripts": {
     "test": "node test"
   },
