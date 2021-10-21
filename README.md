@@ -14,20 +14,20 @@ var write = require('stream-write');
 var http = require('http');
 
 http.createServer(function(req, res){
-  (function next(){
-    write(res, ''+Math.random(), function(err, open){
-      if (err) throw err;
-      if (open) next();
-    });
-  })();
+  (async function (){
+    while (true) {
+      const open = await write(res, ''+Math.random())
+      if (!open) break
+    }
+  })().catch(console.error);
 }).listen(8000);
 ```
 
-## write(stream, chunk, fn)
+## write(stream, chunk)
 
-  Write `chunk` to `stream` and call `fn` once `stream` is writable again, or an error happened.
+  Write `chunk` to `stream` and returns a `Promise` that is resolved once `stream` is writable again, or rejects if an error happened.
 
-  The second parameter to `fn` is false when `stream` ended and you should stop writing to it.
+  The promise's resolved value is false when `stream` ended and you should stop writing to it.
 
 ## HTTP special casing
 
