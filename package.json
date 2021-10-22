@@ -1,13 +1,13 @@
 {
   "name": "stream-write",
   "version": "1.0.1",
-  "description": "Write to a stream callback style",
+  "description": "Write to a stream promise style",
   "scripts": {
-    "test": "make test"
+    "test": "node test"
   },
   "repository": "juliangruber/stream-write",
   "devDependencies": {
-    "tape": "^4.6.3"
+    "baretest": "^2.0.0"
   },
   "license": "MIT"
 }

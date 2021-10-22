@@ -1,8 +1,9 @@
 var write = require('.');
 var Writable = require('stream').Writable;
-var test = require('tape');
+var test = require('baretest')(require('./package.json').name);
+var assert = require('assert')
 
-test('write', function(t){
+test('write', async function(){
   var lastChunk;
 
   var writable = new Writable({
@@ -16,77 +17,59 @@ test('write', function(t){
     }, 10);
   };
 
-  write(writable, 'foo', function(err){
-    t.error(err);
-    t.equal(lastChunk, 'foo');
+  await write(writable, 'foo')
+  assert.equal(lastChunk, 'foo');
   
-    write(writable, 'bar', function(err){
-      t.error(err);
-      t.equal(lastChunk, 'bar');
-      t.end();
-    });
-  });
+  await write(writable, 'bar')
+  assert.equal(lastChunk, 'bar');
 });
 
-test('error', function(t){
+test('error', async function(){
   var writable = new Writable();
   writable._write = function(chunk, _, done){
     done(new Error);
   };
 
-  write(writable, '*ducks*', function(err){
-    t.ok(err);
-    t.end();
-  });
+  await assert.rejects(write(writable, '*ducks*'))
 });
 
-test('end', function(t){
+test('end', async function(){
   var writable = new Writable({
     highWaterMark: 0 // no queuing
   });
+  var writeTime = 0
   writable._write = function(chunk, _, done){
-    setTimeout(function(){
+    setImmediate(function(){
       done();
-      writable.writable = false;
-      writable.end();
-    }, 10);
+      writeTime++
+      if (writeTime === 2) {
+        writable.writable = false;
+        writable.end();
+      }
+    });
   };
 
-  write(writable, 'foo', function(err, more){
-    t.error(err);
-    t.ok(more);
-    write(writable, 'bar', function(err, more){
-      t.error(err);
-      t.notOk(more);
-
-      write(writable, 'bar', function(err){
-        t.ok(err);
-        t.end();
-      });
-    });
-  });
+  var more = await write(writable, 'foo')
+  assert.equal(more, true)
+  var more = await write(writable, 'bar')
+  assert.equal(more, false);
+  await assert.rejects(write(writable, 'bar'))
 });
 
-test('socket closed', function(t){
+test('socket closed', async function(){
   var writable = new Writable();
   writable.socket = { writable: false };
 
-  write(writable, 'foo', function(err){
-    t.ok(err);
-    t.end();
-  });
+  await assert.rejects(write(writable, 'foo'))
 });
 
-test('listener cleanup', function(t){
+test('listener cleanup', async function(){
   var writable = new Writable();
   writable._write = function(_, _, done){ done() };
   var before = listeners();
 
-  write(writable, 'foo', function(err){
-    t.error(err);
-    t.deepEqual(listeners(), before);
-    t.end();
-  });
+  await write(writable, 'foo')
+  assert.deepEqual(listeners(), before);
 
   function listeners(){
     return {
@@ -97,3 +80,4 @@ test('listener cleanup', function(t){
   }
 });
 
+test.run()
