@@ -1,6 +1,6 @@
 {
   "name": "stream-write",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Write to a stream promise style",
   "scripts": {
     "test": "node test"
