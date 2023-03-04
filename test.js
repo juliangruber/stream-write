@@ -1,9 +1,7 @@
 import write from './index.js'
 import { Writable } from 'node:stream'
-import baretest from 'baretest'
+import test from 'test'
 import assert from 'node:assert'
-
-const test = baretest('stream-write')
 
 test('write', async function () {
   let lastChunk
@@ -81,5 +79,3 @@ test('listener cleanup', async function () {
     }
   }
 })
-
-test.run()
