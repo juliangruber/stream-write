@@ -18,10 +18,10 @@ test('write', async () => {
   }
 
   await write(writable, 'foo')
-  assert.equal(lastChunk, 'foo')
+  assert.strictEqual(lastChunk, 'foo')
 
   await write(writable, 'bar')
-  assert.equal(lastChunk, 'bar')
+  assert.strictEqual(lastChunk, 'bar')
 })
 
 test('error', async () => {
@@ -50,9 +50,9 @@ test('end', async () => {
   }
 
   let more = await write(writable, 'foo')
-  assert.equal(more, true)
+  assert.strictEqual(more, true)
   more = await write(writable, 'bar')
-  assert.equal(more, false)
+  assert.strictEqual(more, false)
   await assert.rejects(write(writable, 'bar'))
 })
 
