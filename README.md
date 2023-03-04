@@ -3,8 +3,6 @@
 
   Write to streams, respecting backpressure.
 
-  [![build status](https://secure.travis-ci.org/juliangruber/stream-write.png)](http://travis-ci.org/juliangruber/stream-write)
-
 ## Example
 
   Write random numbers to an http response until it ends:
