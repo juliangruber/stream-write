@@ -3,15 +3,15 @@ import { Writable } from 'node:stream'
 import test from 'test'
 import assert from 'node:assert'
 
-test('write', async function () {
+test('write', async () => {
   let lastChunk
 
   const writable = new Writable({
     highWaterMark: 0 // force immediate backpressure
   })
 
-  writable._write = function (chunk, _, done) {
-    setTimeout(function () {
+  writable._write = (chunk, _, done) => {
+    setTimeout(() => {
       lastChunk = chunk.toString()
       done()
     }, 10)
@@ -24,22 +24,22 @@ test('write', async function () {
   assert.equal(lastChunk, 'bar')
 })
 
-test('error', async function () {
+test('error', async () => {
   const writable = new Writable()
-  writable._write = function (chunk, _, done) {
+  writable._write = (_, __, done) => {
     done(new Error())
   }
 
   await assert.rejects(write(writable, '*ducks*'))
 })
 
-test('end', async function () {
+test('end', async () => {
   const writable = new Writable({
     highWaterMark: 0 // no queuing
   })
   let writeTime = 0
-  writable._write = function (chunk, _, done) {
-    setImmediate(function () {
+  writable._write = (_, __, done) => {
+    setImmediate(() => {
       done()
       writeTime++
       if (writeTime === 2) {
@@ -56,26 +56,25 @@ test('end', async function () {
   await assert.rejects(write(writable, 'bar'))
 })
 
-test('socket closed', async function () {
+test('socket closed', async () => {
   const writable = new Writable()
   writable.socket = { writable: false }
 
   await assert.rejects(write(writable, 'foo'))
 })
 
-test('listener cleanup', async function () {
+test('listener cleanup', async () => {
   const writable = new Writable()
-  writable._write = function (_, __, done) { done() }
-  const before = listeners()
-
-  await write(writable, 'foo')
-  assert.deepEqual(listeners(), before)
-
-  function listeners () {
+  writable._write = (_, __, done) => done()
+  const listeners = () => {
     return {
       error: writable.listeners('error'),
       drain: writable.listeners('drain'),
       finish: writable.listeners('finish')
     }
   }
+
+  const before = listeners()
+  await write(writable, 'foo')
+  assert.deepEqual(listeners(), before)
 })

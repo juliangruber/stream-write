@@ -11,8 +11,8 @@
 import write from 'stream-write'
 import http from 'node:http'
 
-http.createServer(function(req, res){
-  (async function (){
+http.createServer((req, res) => {
+  (async () => {
     while (true) {
       const isOpen = await write(res, String(Math.random()))
       if (!isOpen) break
