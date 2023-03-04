@@ -10,17 +10,17 @@
   Write random numbers to an http response until it ends:
 
 ```js
-import write from 'stream-write';
-import http from 'node:http';
+import write from 'stream-write'
+import http from 'node:http'
 
 http.createServer(function(req, res){
   (async function (){
     while (true) {
-      const open = await write(res, ''+Math.random())
-      if (!open) break
+      const isOpen = await write(res, String(Math.random()))
+      if (!isOpen) break
     }
-  })().catch(console.error);
-}).listen(8000);
+  })().catch(console.error)
+}).listen(8000)
 ```
 
 ## write(stream, chunk)
