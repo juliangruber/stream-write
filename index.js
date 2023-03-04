@@ -1,6 +1,6 @@
-const { once } = require('events')
+import { once } from 'node:events'
 
-module.exports = async function write(stream, chunk){
+export default async function write(stream, chunk){
   if (!stream.writable) throw new Error('Stream is not writable');
 
   if (!stream.write(chunk)) {

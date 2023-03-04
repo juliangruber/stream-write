@@ -1,7 +1,9 @@
-var write = require('.');
-var Writable = require('stream').Writable;
-var test = require('baretest')(require('./package.json').name);
-var assert = require('assert')
+import write from './index.js';
+import { Writable } from 'node:stream';
+import baretest from 'baretest';
+import assert from 'node:assert';
+
+const test = baretest('stream-write');
 
 test('write', async function(){
   var lastChunk;
@@ -65,7 +67,7 @@ test('socket closed', async function(){
 
 test('listener cleanup', async function(){
   var writable = new Writable();
-  writable._write = function(_, _, done){ done() };
+  writable._write = function(_, __, done){ done() };
   var before = listeners();
 
   await write(writable, 'foo')

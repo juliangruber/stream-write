@@ -2,8 +2,9 @@
   "name": "stream-write",
   "version": "2.0.0",
   "description": "Write to a stream promise style",
+  "type": "module",
   "scripts": {
-    "test": "node test"
+    "test": "node test.js"
   },
   "repository": "juliangruber/stream-write",
   "devDependencies": {

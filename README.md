@@ -10,8 +10,8 @@
   Write random numbers to an http response until it ends:
 
 ```js
-var write = require('stream-write');
-var http = require('http');
+import write from 'stream-write';
+import http from 'node:http';
 
 http.createServer(function(req, res){
   (async function (){
