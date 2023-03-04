@@ -1,85 +1,85 @@
-import write from './index.js';
-import { Writable } from 'node:stream';
-import baretest from 'baretest';
-import assert from 'node:assert';
+import write from './index.js'
+import { Writable } from 'node:stream'
+import baretest from 'baretest'
+import assert from 'node:assert'
 
-const test = baretest('stream-write');
+const test = baretest('stream-write')
 
-test('write', async function(){
-  var lastChunk;
+test('write', async function () {
+  let lastChunk
 
-  var writable = new Writable({
+  const writable = new Writable({
     highWaterMark: 0 // force immediate backpressure
-  });
+  })
 
-  writable._write = function(chunk, _, done){
-    setTimeout(function(){
-      lastChunk = chunk.toString();
-      done();
-    }, 10);
-  };
+  writable._write = function (chunk, _, done) {
+    setTimeout(function () {
+      lastChunk = chunk.toString()
+      done()
+    }, 10)
+  }
 
   await write(writable, 'foo')
-  assert.equal(lastChunk, 'foo');
-  
-  await write(writable, 'bar')
-  assert.equal(lastChunk, 'bar');
-});
+  assert.equal(lastChunk, 'foo')
 
-test('error', async function(){
-  var writable = new Writable();
-  writable._write = function(chunk, _, done){
-    done(new Error);
-  };
+  await write(writable, 'bar')
+  assert.equal(lastChunk, 'bar')
+})
+
+test('error', async function () {
+  const writable = new Writable()
+  writable._write = function (chunk, _, done) {
+    done(new Error())
+  }
 
   await assert.rejects(write(writable, '*ducks*'))
-});
+})
 
-test('end', async function(){
-  var writable = new Writable({
+test('end', async function () {
+  const writable = new Writable({
     highWaterMark: 0 // no queuing
-  });
-  var writeTime = 0
-  writable._write = function(chunk, _, done){
-    setImmediate(function(){
-      done();
+  })
+  let writeTime = 0
+  writable._write = function (chunk, _, done) {
+    setImmediate(function () {
+      done()
       writeTime++
       if (writeTime === 2) {
-        writable.writable = false;
-        writable.end();
+        writable.writable = false
+        writable.end()
       }
-    });
-  };
+    })
+  }
 
-  var more = await write(writable, 'foo')
+  let more = await write(writable, 'foo')
   assert.equal(more, true)
-  var more = await write(writable, 'bar')
-  assert.equal(more, false);
+  more = await write(writable, 'bar')
+  assert.equal(more, false)
   await assert.rejects(write(writable, 'bar'))
-});
+})
 
-test('socket closed', async function(){
-  var writable = new Writable();
-  writable.socket = { writable: false };
+test('socket closed', async function () {
+  const writable = new Writable()
+  writable.socket = { writable: false }
 
   await assert.rejects(write(writable, 'foo'))
-});
+})
 
-test('listener cleanup', async function(){
-  var writable = new Writable();
-  writable._write = function(_, __, done){ done() };
-  var before = listeners();
+test('listener cleanup', async function () {
+  const writable = new Writable()
+  writable._write = function (_, __, done) { done() }
+  const before = listeners()
 
   await write(writable, 'foo')
-  assert.deepEqual(listeners(), before);
+  assert.deepEqual(listeners(), before)
 
-  function listeners(){
+  function listeners () {
     return {
       error: writable.listeners('error'),
       drain: writable.listeners('drain'),
       finish: writable.listeners('finish')
-    };
+    }
   }
-});
+})
 
 test.run()

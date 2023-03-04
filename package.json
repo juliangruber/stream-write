@@ -4,11 +4,12 @@
   "description": "Write to a stream promise style",
   "type": "module",
   "scripts": {
-    "test": "node test.js"
+    "test": "standard --fix && node test.js"
   },
   "repository": "juliangruber/stream-write",
   "devDependencies": {
-    "baretest": "^2.0.0"
+    "baretest": "^2.0.0",
+    "standard": "^17.0.0"
   },
   "license": "MIT"
 }
