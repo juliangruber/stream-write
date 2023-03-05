@@ -11,13 +11,11 @@
 import write from 'stream-write'
 import http from 'node:http'
 
-http.createServer((req, res) => {
-  (async () => {
-    while (true) {
-      const isOpen = await write(res, String(Math.random()))
-      if (!isOpen) break
-    }
-  })().catch(console.error)
+http.createServer(async (req, res) => {
+  while (true) {
+    const isOpen = await write(res, String(Math.random()))
+    if (!isOpen) break
+  }
 }).listen(8000)
 ```
 
